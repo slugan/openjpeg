@@ -291,7 +291,7 @@ static OPJ_BOOL parse_precision(const char* option, opj_decompress_parameters* p
 			
 			if (parameters->precision == NULL) {
 				/* first one */
-				parameters->precision = malloc(sizeof(opj_precision));
+				parameters->precision = (opj_precision *)malloc(sizeof(opj_precision));
 				if (parameters->precision == NULL) {
 					fprintf(stderr,"Could not allocate memory for precision option\n");
 					l_result = OPJ_FALSE;
@@ -307,7 +307,7 @@ static OPJ_BOOL parse_precision(const char* option, opj_decompress_parameters* p
 					break;
 				}
 				
-				l_new = realloc(parameters->precision, l_new_size * sizeof(opj_precision));
+				l_new = (opj_precision *)realloc(parameters->precision, l_new_size * sizeof(opj_precision));
 				if (l_new == NULL) {
 					fprintf(stderr,"Could not allocate memory for precision option\n");
 					l_result = OPJ_FALSE;
@@ -400,7 +400,7 @@ int get_file_format(const char *filename) {
 	unsigned int i;
 	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "rawl", "tga", "png", "j2k", "jp2", "jpt", "j2c", "jpc" };
 	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, RAWL_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT, J2K_CFMT };
-	char * ext = strrchr(filename, '.');
+	const char * ext = strrchr(filename, '.');
 	if (ext == NULL)
 		return -1;
 	ext++;
@@ -1108,7 +1108,7 @@ static opj_image_t* upsample_image_components(opj_image_t* original)
 				l_dst += l_new_cmp->w;
 			}
 			
-			if(l_new_cmp->h > (l_org_cmp->dy - 1U)) { /* check substraction overflow for really small images */
+			if(l_new_cmp->h > (l_org_cmp->dy - 1U)) { /* check subtraction overflow for really small images */
 				for (; y < l_new_cmp->h - (l_org_cmp->dy - 1U); y += l_org_cmp->dy) {
 					OPJ_UINT32 x, dy;
 					OPJ_UINT32 xorg;
@@ -1117,7 +1117,7 @@ static opj_image_t* upsample_image_components(opj_image_t* original)
 					for (x = 0U; x < xoff; ++x) {
 						l_dst[x] = 0;
 					}
-					if (l_new_cmp->w > (l_org_cmp->dx - 1U)) { /* check substraction overflow for really small images */
+					if (l_new_cmp->w > (l_org_cmp->dx - 1U)) { /* check subtraction overflow for really small images */
 						for (; x < l_new_cmp->w - (l_org_cmp->dx - 1U); x += l_org_cmp->dx, ++xorg) {
 							OPJ_UINT32 dx;
 							for (dx = 0U; dx < l_org_cmp->dx; ++dx) {
@@ -1145,7 +1145,7 @@ static opj_image_t* upsample_image_components(opj_image_t* original)
 				for (x = 0U; x < xoff; ++x) {
 					l_dst[x] = 0;
 				}
-				if (l_new_cmp->w > (l_org_cmp->dx - 1U)) { /* check substraction overflow for really small images */
+				if (l_new_cmp->w > (l_org_cmp->dx - 1U)) { /* check subtraction overflow for really small images */
 					for (; x < l_new_cmp->w - (l_org_cmp->dx - 1U); x += l_org_cmp->dx, ++xorg) {
 						OPJ_UINT32 dx;
 						for (dx = 0U; dx < l_org_cmp->dx; ++dx) {
