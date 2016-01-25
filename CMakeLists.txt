@@ -227,14 +227,16 @@ OPJ_TEST_LARGE_FILES(OPJ_HAVE_LARGEFILES)
 
 # Allocating Aligned Memory Blocks
 include(CheckIncludeFiles)
-check_include_files(malloc.h HAVE_MALLOC_H)
+check_include_files(malloc.h OPJ_HAVE_MALLOC_H)
 include(CheckSymbolExists)
 # _aligned_alloc https://msdn.microsoft.com/en-us/library/8z34s9c6.aspx
-check_symbol_exists(_aligned_malloc malloc.h HAVE__ALIGNED_MALLOC)
-# posix_memalign
-check_symbol_exists(posix_memalign stdlib.h HAVE_POSIX_MEMALIGN)
+check_symbol_exists(_aligned_malloc malloc.h OPJ_HAVE__ALIGNED_MALLOC)
+# posix_memalign (needs _POSIX_C_SOURCE >= 200112L on Linux)
+set(CMAKE_REQUIRED_DEFINITIONS -D_POSIX_C_SOURCE=200112L)
+check_symbol_exists(posix_memalign stdlib.h OPJ_HAVE_POSIX_MEMALIGN)
+unset(CMAKE_REQUIRED_DEFINITIONS)
 # memalign (obsolete)
-check_symbol_exists(memalign malloc.h HAVE_MEMALIGN)
+check_symbol_exists(memalign malloc.h OPJ_HAVE_MEMALIGN)
 #-----------------------------------------------------------------------------
 # Build Library
 if(BUILD_JPIP_SERVER)
@@ -301,8 +303,8 @@ if(BUILD_TESTING)
     include(CTest)
 
     # Search openjpeg data needed for the tests
-    # They could be found via svn on the OpenJPEG google code project
-    # svn checkout http://openjpeg.googlecode.com/svn/data (about 70 Mo)
+    # They could be found via git on the OpenJPEG GitHub code project
+    # git clone https://github.com/uclouvain/openjpeg-data.git
     find_path(OPJ_DATA_ROOT README-OPJ-Data
       PATHS $ENV{OPJ_DATA_ROOT} ${CMAKE_SOURCE_DIR}/../data
       NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
